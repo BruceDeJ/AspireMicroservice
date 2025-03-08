@@ -1,3 +1,5 @@
+using AuthAPI;
+using TimeSheet.ApiService;
 using TimeSheet.AuthAPI;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,6 +11,8 @@ builder.AddServiceDefaults();
 builder.Services.AddProblemDetails();
 
 var app = builder.Build();
+
+builder.Services.AddDbContext<TimeSheetContext>();
 
 // Configure the HTTP request pipeline.
 app.UseExceptionHandler();
