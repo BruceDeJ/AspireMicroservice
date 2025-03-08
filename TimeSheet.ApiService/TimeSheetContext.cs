@@ -13,7 +13,7 @@ namespace TimeSheet.ApiService
         {
             var folder = Environment.SpecialFolder.LocalApplicationData;
             var path = Environment.GetFolderPath(folder);
-            DbPath = Path.Join(path, "timsheet.db");
+            DbPath = Path.Join(path, "timesheet.db");
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)
