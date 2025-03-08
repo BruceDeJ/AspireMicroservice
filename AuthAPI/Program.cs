@@ -4,11 +4,9 @@
 
 using AuthAPI;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Net.Http.Headers;
-using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using TimeSheet.AuthAPI;
