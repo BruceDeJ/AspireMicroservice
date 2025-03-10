@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Net.Http.Headers;
 using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using System.Text;
 using TimeSheet.AuthAPI;
 using TimeSheet.AuthAPI.Domain;
@@ -133,9 +134,11 @@ string GenerateJwtToken(string userId, string jwtSecret, string jwtIssuer, strin
     var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecret));
     var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
+    var claims = new List<Claim>() { new Claim("UserID", userId) };
+
     var securityToken = new JwtSecurityToken(jwtIssuer,
         jwtAudience,
-        null,
+        claims,
         expires: DateTime.Now.AddMinutes(60),
         signingCredentials: credentials);
 

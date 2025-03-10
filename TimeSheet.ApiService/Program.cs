@@ -1,5 +1,9 @@
 using AuthAPI;
+using Microsoft.Net.Http.Headers;
+using System.IdentityModel.Tokens.Jwt;
 using TimeSheet.ApiService;
+using TimeSheet.ApiService.Domain;
+using TimeSheet.ApiService.Model;
 using TimeSheet.AuthAPI;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,10 +13,9 @@ builder.AddServiceDefaults();
 
 // Add services to the container.
 builder.Services.AddProblemDetails();
+builder.Services.AddDbContext<TimeSheetContext>();
 
 var app = builder.Build();
-
-builder.Services.AddDbContext<TimeSheetContext>();
 
 // Configure the HTTP request pipeline.
 app.UseExceptionHandler();
@@ -31,6 +34,25 @@ app.MapGet("/weatherforecast", () =>
         ))
         .ToArray();
     return forecast;
+});
+
+app.MapPost("/TimeSheetEntry", async (HttpRequest request, TimeSheetEntryInput input, TimeSheetContext context) =>
+{
+    var accessToken = request.Headers.SingleOrDefault(x => x.Key.ToLower() == HeaderNames.Authorization.ToLower()).Value.FirstOrDefault();
+    var accessTokenBearerRemoved = accessToken?.Substring(7);
+
+    var tokenHandler = new JwtSecurityTokenHandler();
+
+    var validatedToken = tokenHandler.ReadJwtToken(accessTokenBearerRemoved);
+    var userId = validatedToken.Claims.SingleOrDefault(x => x.Type == "UserID").Value;
+
+    var newTimeSheetEntry = new TimeSheetEntry(input.DurationInMinutes, input.Description, userId);
+    
+    var createdTimeSheetEntry = await context.AddAsync(newTimeSheetEntry);
+    await context.SaveChangesAsync();
+
+    return Results.Created("/TimeSheetEntry", createdTimeSheetEntry.Entity);
+
 });
 
 app.MapDefaultEndpoints();
