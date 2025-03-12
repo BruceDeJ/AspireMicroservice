@@ -1,4 +1,6 @@
 using AuthAPI;
+using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Net.Http.Headers;
 using System.IdentityModel.Tokens.Jwt;
 using TimeSheet.ApiService;
@@ -19,32 +21,34 @@ var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 app.UseExceptionHandler();
-var summaries = new[]
+
+app.MapGet("/TimeSheetEntry", async (HttpRequest request, TimeSheetContext context) =>
 {
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
-app.MapGet("/weatherforecast", () =>
+    var userId = GetUserIdFromJWT(request);
+
+    var userTimeSheetEntries = await context.TimeSheetEntries.Where(x => x.LoggedBy == userId).ToListAsync();
+
+    return Results.Ok(userTimeSheetEntries);
+});
+
+app.MapDelete("/TimeSheetEntry/{id}", async (int id, HttpRequest request, TimeSheetContext context) =>
 {
-    var forecast = Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
+    var timesheetEntry = await context.TimeSheetEntries.SingleOrDefaultAsync(x => x.Id == id);
+
+    if (timesheetEntry == null)
+    {
+        return Results.NotFound();
+    }
+
+    context.Remove(timesheetEntry);
+    await context.SaveChangesAsync();
+
+    return Results.NoContent();
 });
 
 app.MapPost("/TimeSheetEntry", async (HttpRequest request, TimeSheetEntryInput input, TimeSheetContext context) =>
 {
-    var accessToken = request.Headers.SingleOrDefault(x => x.Key.ToLower() == HeaderNames.Authorization.ToLower()).Value.FirstOrDefault();
-    var accessTokenBearerRemoved = accessToken?.Substring(7);
-
-    var tokenHandler = new JwtSecurityTokenHandler();
-
-    var validatedToken = tokenHandler.ReadJwtToken(accessTokenBearerRemoved);
-    var userId = validatedToken.Claims.SingleOrDefault(x => x.Type == "UserID").Value;
+    var userId = GetUserIdFromJWT(request);
 
     var newTimeSheetEntry = new TimeSheetEntry(input.DurationInMinutes, input.Description, userId);
     
@@ -52,14 +56,21 @@ app.MapPost("/TimeSheetEntry", async (HttpRequest request, TimeSheetEntryInput i
     await context.SaveChangesAsync();
 
     return Results.Created("/TimeSheetEntry", createdTimeSheetEntry.Entity);
-
 });
 
 app.MapDefaultEndpoints();
 
 app.Run();
 
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
+string GetUserIdFromJWT(HttpRequest request)
 {
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+    var bearerAccessToken = request.Headers.SingleOrDefault(x => x.Key.ToLower() == HeaderNames.Authorization.ToLower()).Value.FirstOrDefault();
+    var accessToken = bearerAccessToken?.Substring(7);
+
+    var tokenHandler = new JwtSecurityTokenHandler();
+
+    var validatedToken = tokenHandler.ReadJwtToken(accessToken);
+    var userId = validatedToken.Claims.SingleOrDefault(x => x.Type == "UserID").Value;
+
+    return userId;
 }
