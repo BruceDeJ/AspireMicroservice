@@ -1,19 +1,45 @@
 ﻿@page "/counter"
+@using System.ComponentModel.DataAnnotations
 @rendermode InteractiveServer
 
-<PageTitle>Counter</PageTitle>
+<PageTitle>Registration</PageTitle>
 
-<h1>Counter</h1>
+<h1>Register New User</h1>
 
-<p role="status">Current count: @currentCount</p>
-
-<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+<EditForm Model=@registrationForm OnValidSubmit="FormSubmitted">
+    <DataAnnotationsValidator />
+    <div class="form-group">
+        <label for="Email">Email</label>
+        <InputText @bind-Value=registrationForm.Email class="form-control" id="Email" />
+        <ValidationMessage For="() => registrationForm.Email" />
+    </div>
+    <div class="form-group">
+        <label for="Password">Password</label>
+        <InputText type="password" @bind-Value=registrationForm.Password class="form-control" id="Password" />
+        <ValidationMessage For="() => registrationForm.Password" />
+    </div>
+    <input type="submit" value="Submit" class="btn btn-primary" />
+</EditForm>
 
 @code {
-    private int currentCount = 0;
 
-    private void IncrementCount()
+    //https://learn.microsoft.com/en-us/aspnet/core/blazor/state-management?view=aspnetcore-9.0&pivots=server#handle-prerendering
+
+    private RegistrationForm registrationForm = new RegistrationForm();
+
+
+    async Task FormSubmitted()
     {
-        currentCount++;
+        
+    }
+
+    public class RegistrationForm
+    {
+        [Required]
+        public string Email { get; set; }
+        
+        [Required]
+        [DataType(DataType.Password)]
+        public string Password { get; set; }
     }
 }
