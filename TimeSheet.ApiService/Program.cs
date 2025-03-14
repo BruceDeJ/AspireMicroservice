@@ -70,7 +70,7 @@ string GetUserIdFromJWT(HttpRequest request)
     var tokenHandler = new JwtSecurityTokenHandler();
 
     var validatedToken = tokenHandler.ReadJwtToken(accessToken);
-    var userId = validatedToken.Claims.SingleOrDefault(x => x.Type == "UserID").Value;
+    var userId = validatedToken?.Claims?.SingleOrDefault(x => x.Type == "UserID")?.Value ?? string.Empty;
 
     return userId;
 }

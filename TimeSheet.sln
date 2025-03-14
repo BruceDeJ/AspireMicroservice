@@ -12,7 +12,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TimeSheet.Web", "TimeSheet.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TimeSheet.AuthAPI", "AuthAPI\TimeSheet.AuthAPI.csproj", "{BF27A0F0-F6A8-42DF-84C8-69565A7E4944}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TimeSheet.ApiGateway", "TimeSheet.ApiGateway\TimeSheet.ApiGateway.csproj", "{4DF6DAF0-3124-4860-9269-F07B050593A7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TimeSheet.ApiGateway", "TimeSheet.ApiGateway\TimeSheet.ApiGateway.csproj", "{4DF6DAF0-3124-4860-9269-F07B050593A7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

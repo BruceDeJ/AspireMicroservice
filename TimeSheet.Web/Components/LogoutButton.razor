@@ -1,0 +1,37 @@
+﻿@inject NavigationManager NavigationManager
+
+@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
+@using System.ComponentModel.DataAnnotations
+@using TimeSheet.Web.Components.Models
+
+@inject AuthApiClient AuthAPI;
+@inject ProtectedSessionStorage ProtectedSessionStore
+@rendermode @(new InteractiveServerRenderMode(prerender: false))
+
+@if (!string.IsNullOrEmpty(authJWTToken))
+{
+    <button class="btn btn-primary" @onclick="Logout">Logout</button>
+}
+
+@code {
+    public string authJWTToken = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authJWTTokenProtected = await ProtectedSessionStore.GetAsync<string>("authJWTToken");
+        authJWTToken = authJWTTokenProtected.Value;
+    }
+
+    async Task Logout()
+    {
+        if (!string.IsNullOrEmpty(authJWTToken))
+        {
+            var success = await AuthAPI.LogOut(authJWTToken);
+
+            if (success)
+            {
+                NavigationManager.NavigateTo("/");
+            }
+        }
+    }
+}

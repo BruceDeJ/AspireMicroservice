@@ -1,4 +1,5 @@
 using System.Net.Http.Headers;
+using TimeSheet.Web.Components.Models;
 
 namespace TimeSheet.Web;
 
@@ -35,14 +36,5 @@ public class TimesheetApiClient(HttpClient httpClient)
         var response = await httpClient.DeleteAsync($"/TimeSheetEntry/{timesheetEntryId}");
 
         return response.IsSuccessStatusCode ? true : false;
-    }
-
-    public class TimeSheetEntry
-    {
-        public int Id { get; set; }
-        public int DurationInMinutes { get; set; }
-        public string Description { get; set; }
-        public DateTime DateLogged { get; set; }
-        public string LoggedBy { get; set; }
     }
 }
