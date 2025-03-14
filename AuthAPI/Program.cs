@@ -104,7 +104,7 @@ app.MapPost("/Login", async (LoginInput input, IdentityContext identityContext, 
 })
 .WithName("Login");
 
-app.MapPost("/Logout", async (HttpRequest request, IdentityContext identityContext) =>
+app.MapGet("/Logout", async (HttpRequest request, IdentityContext identityContext) =>
 {
     var accessToken = request.Headers.SingleOrDefault(x => x.Key.ToLower() == HeaderNames.Authorization.ToLower()).Value.FirstOrDefault();
     var accessTokenBearerRemoved = accessToken?.Substring(7);
