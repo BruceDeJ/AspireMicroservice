@@ -8,28 +8,21 @@
 @inject ProtectedSessionStorage ProtectedSessionStore
 @rendermode @(new InteractiveServerRenderMode(prerender: false))
 
-@if (!string.IsNullOrEmpty(authJWTToken))
-{
-    <button class="btn btn-primary" @onclick="Logout">Logout</button>
-}
+<button class="btn btn-primary" @onclick="Logout" style="margin-left: 43%;">Logout</button>
 
 @code {
-    public string authJWTToken = string.Empty;
-
-    protected override async Task OnInitializedAsync()
-    {
-        var authJWTTokenProtected = await ProtectedSessionStore.GetAsync<string>("authJWTToken");
-        authJWTToken = authJWTTokenProtected.Value;
-    }
-
     async Task Logout()
     {
+        var authJWTTokenProtected = await ProtectedSessionStore.GetAsync<string>("authJWTToken");
+        var authJWTToken = authJWTTokenProtected.Value;
+
         if (!string.IsNullOrEmpty(authJWTToken))
         {
             var success = await AuthAPI.LogOut(authJWTToken);
 
             if (success)
             {
+                await ProtectedSessionStore.SetAsync("authJWTToken", string.Empty);
                 NavigationManager.NavigateTo("/");
             }
         }

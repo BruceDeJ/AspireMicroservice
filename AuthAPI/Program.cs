@@ -70,6 +70,13 @@ app.UseHttpsRedirection();
 
 app.MapPost("/Register", async (RegistrationInput registration, IdentityContext identityContext) =>
 {
+    var userExists = identityContext.Users.Any(x => x.Email.ToLower() == registration.Email.ToLower());
+
+    if (userExists)
+    {
+        return Results.Problem(statusCode: StatusCodes.Status500InternalServerError, detail: "User already exists");
+    }
+
     var contextUser = identityContext.Add(new User(registration.Email, registration.Password));
     await identityContext.SaveChangesAsync();
 

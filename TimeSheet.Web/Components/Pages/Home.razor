@@ -12,9 +12,12 @@
 
 <PageTitle>TimeSheet System</PageTitle>
 
-<div class="Row mb-3">
-    <div class="col-9">
+<div class="row mb-3">
+    <div class="col-11">
         <h1>TimeSheet System</h1>
+    </div>
+    <div class="col-1">
+        <LogoutButton />
     </div>
 </div>
 
@@ -104,11 +107,24 @@
 
     async Task FetchTimeSheetEntries()
     {
-        timeSheetEntries = await TimeSheetAPI.GetTimeSheetEntries(authJWTToken);
+        if (!string.IsNullOrEmpty(authJWTToken))
+        {
+            timeSheetEntries = await TimeSheetAPI.GetTimeSheetEntries(authJWTToken);
+        }
+        else
+        {
+            Console.WriteLine("JWT Token empty");
+        }
     }
 
     async Task HandleDeleteTimeSheetEntry(int timesheetEntryId)
     {
+        if (string.IsNullOrEmpty(authJWTToken))
+        {
+            Console.WriteLine("JWT Token empty");
+            return;
+        }
+
         var success = await TimeSheetAPI.DeleteTimeSheetEntry(authJWTToken, timesheetEntryId);
 
         if (success)
@@ -120,6 +136,12 @@
 
     async Task FormSubmitted()
     {
+        if (string.IsNullOrEmpty(authJWTToken))
+        {
+            Console.WriteLine("JWT Token empty");
+            return;
+        }
+
         var success = await TimeSheetAPI.CreateTimeSheetEntry(authJWTToken,
             timeSheetEntryInput.DurationInMinutes,
             timeSheetEntryInput.Description);
@@ -129,13 +151,5 @@
             await JS.InvokeVoidAsync("alert", "Time Sheet Entry Created");
             await FetchTimeSheetEntries();
         }
-    }
-
-    public class TimeSheetEntryInput
-    {
-        [Required]
-        public int DurationInMinutes { get; set; }
-        [Required]
-        public string Description { get; set; }
     }
 }

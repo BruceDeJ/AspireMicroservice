@@ -5,6 +5,7 @@
 @inject NavigationManager NavigationManager
 @using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
 @inject ProtectedSessionStorage ProtectedSessionStore
+@inject IJSRuntime JS
 
 <PageTitle>Login</PageTitle>
 <div style ="margin: auto; width: 50%;">
@@ -52,7 +53,12 @@
         if (successful)
         {
             await ProtectedSessionStore.SetAsync("authJWTToken", jwt);
+
             NavigationManager.NavigateTo("/Home");
+        }
+        else
+        {
+            await JS.InvokeVoidAsync("alert", "Credentials invalid");
         }
     }
 
