@@ -1,7 +1,7 @@
 ﻿@page "/"
 @using System.ComponentModel.DataAnnotations
 @rendermode InteractiveServer
-@inject AuthApiClient WeatherApi
+@inject AuthApiClient AuthAPI
 @inject NavigationManager NavigationManager
 @using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
 @inject ProtectedSessionStorage ProtectedSessionStore
@@ -48,7 +48,7 @@
 
     async Task FormSubmitted()
     {
-        var (jwt, successful) = await WeatherApi.Login(loginForm.Email, loginForm.Password);
+        var (jwt, successful) = await AuthAPI.Login(loginForm.Email, loginForm.Password);
 
         if (successful)
         {

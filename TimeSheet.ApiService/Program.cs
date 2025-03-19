@@ -17,10 +17,23 @@ builder.AddServiceDefaults();
 builder.Services.AddProblemDetails();
 builder.Services.AddDbContext<TimeSheetContext>();
 
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
 var app = builder.Build();
+
+app.MapDefaultEndpoints();
 
 // Configure the HTTP request pipeline.
 app.UseExceptionHandler();
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+
+app.UseHttpsRedirection();
 
 app.MapGet("/TimeSheetEntry", async (HttpRequest request, TimeSheetContext context) =>
 {

@@ -1,7 +1,7 @@
 ﻿@page "/Registration"
 @using System.ComponentModel.DataAnnotations
 @rendermode InteractiveServer
-@inject AuthApiClient WeatherApi
+@inject AuthApiClient AuthAPI
 @inject NavigationManager NavigationManager
 
 
@@ -49,7 +49,7 @@
 
     async Task FormSubmitted()
     {
-        var successful = await WeatherApi.Register(registrationForm.Email, registrationForm.Password);
+        var successful = await AuthAPI.Register(registrationForm.Email, registrationForm.Password);
 
         if (successful)
         {
