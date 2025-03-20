@@ -21,9 +21,8 @@ You can find a detailed guide on .NET Aspire setup and tooling at this [link](ht
 
 ## Usage
 
-To run the application simply open the solution in Visual Studio and then run the "https" launch profile. Alternatively you can run the application from the CLI by navigating to the ./Timesheet.AppHost directory and then in CMD run "dotnet run".
+To run the application simply open the solution in Visual Studio and then run the "https" launch profile. Alternatively you can run the application from the CLI by navigating to the ./Timesheet.AppHost directory and then in CMD run `dotnet run`.
 
-```
 
 
 ## License
