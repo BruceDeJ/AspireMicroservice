@@ -1,4 +1,4 @@
-using AuthAPI;
+
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Net.Http.Headers;
@@ -6,7 +6,6 @@ using System.IdentityModel.Tokens.Jwt;
 using TimeSheet.ApiService;
 using TimeSheet.ApiService.Domain;
 using TimeSheet.ApiService.Model;
-using TimeSheet.AuthAPI;
 
 var builder = WebApplication.CreateBuilder(args);
 
