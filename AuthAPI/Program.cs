@@ -19,7 +19,7 @@ string jwtKey = string.Empty;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddDbContext<IdentityContext>();
+builder.AddSqlServerDbContext<IdentityContext>("Auth");
 
 builder.AddServiceDefaults();
 
@@ -133,6 +133,23 @@ app.MapGet("/Logout", async (HttpRequest request, IdentityContext identityContex
 .WithOpenApi();
 
 app.UseAuthentication();
+
+
+if (app.Environment.IsDevelopment())
+{
+    using (var scope = app.Services.CreateScope())
+    {
+        var context = scope.ServiceProvider.GetRequiredService<IdentityContext>();
+        context.Database.EnsureCreated();
+    }
+}
+else
+{
+    app.UseExceptionHandler("/Error", createScopeForErrors: true);
+    // The default HSTS value is 30 days.
+    // You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+    app.UseHsts();
+}
 
 app.Run();
 

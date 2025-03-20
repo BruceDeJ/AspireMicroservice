@@ -1,22 +1,15 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Reflection.Metadata;
 using TimeSheet.ApiService.Domain;
 
 namespace TimeSheet.ApiService
 {
     public class TimeSheetContext : DbContext
     {
-        public DbSet<TimeSheetEntry> TimeSheetEntries { get; set; }
-
-        public string DbPath { get; }
-
-        public TimeSheetContext()
+        public TimeSheetContext(DbContextOptions options) : base(options)
         {
-            var folder = Environment.SpecialFolder.LocalApplicationData;
-            var path = Environment.GetFolderPath(folder);
-            DbPath = Path.Join(path, "timesheet.db");
         }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder options)
-            => options.UseSqlite($"Data Source={DbPath}");
+        public DbSet<TimeSheetEntry> TimeSheetEntries { get; set; }
     }
 }
